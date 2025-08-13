@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>إتمام الشراء | الهداية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="brand">الهداية<span class="dot">•</span></div>
+      <nav class="nav-actions">
+        <a class="btn" href="index.html">استمرار التسوق</a>
+        <a class="btn">السلة <span class="badge" data-cart-count>0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="checkout" style="margin-top:16px">
+      <section class="panel">
+        <h3>ملخص الطلب</h3>
+        <div id="items"></div>
+        <div class="row" style="justify-content:space-between;margin-top:10px">
+          <div>الإجمالي</div>
+          <b id="total">0 ج.م</b>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>الدفع عبر Vodafone Cash</h3>
+        <p class="help">اتبعي الخطوات التالية لإتمام الدفع. هذه طريقة يدوية بدون تكامل API.</p>
+
+        <div class="notice" style="margin-top:8px">
+          <div>رقم الدفع: <span class="code">01009978684</span></div>
+          <div>قيمة الدفع: <b id="amount">0</b> ج.م</div>
+          <div>رقم الطلب: <span class="code" id="orderId">—</span></div>
+        </div>
+
+        <ol class="help" style="margin-top:8px">
+          <li>افتحي تطبيق Vodafone Cash أو إلى أقرب وكيل.</li>
+          <li>حوّلي المبلغ الموضّح إلى الرقم أعلاه.</li>
+          <li>أضيفي <b>رقم الطلب</b> في ملاحظات عملية التحويل.</li>
+          <li>أدخلي رقم المعاملة (Transaction ID) أدناه ثم اضغطي تأكيد.</li>
+        </ol>
+
+        <label class="label" for="name">الاسم</label>
+        <input id="name" class="input" placeholder="اسمك ثلاثي">
+        <label class="label" for="phone" style="margin-top:8px">رقم الهاتف</label>
+        <input id="phone" class="input" placeholder="01xxxxxxxxx">
+        <label class="label" for="tx" style="margin-top:8px">رقم المعاملة (Transaction ID)</label>
+        <input id="tx" class="input" placeholder="مثال: 1234567890">
+        <div class="row" style="justify-content:space-between;margin-top:12px">
+          <span class="help">* سيتم التحقق يدويًا من الدفع ثم التواصل معك للتسليم.</span>
+          <button id="confirm" class="btn btn-primary">تأكيد الدفع</button>
+        </div>
+        <div id="msg" class="help" style="margin-top:10px"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      © 2025 الهداية — دفع Vodafone Cash على <span class="code">01009978684</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    // Build order UI
+    const box = document.getElementById('items');
+    const cart = loadCart();
+    if(cart.length===0) box.innerHTML = '<p class="help">السلة فارغة — عودي للمتجر لإضافة منتجات.</p>';
+    cart.forEach(i=>{
+      const row = document.createElement('div');
+      row.className='row';
+      row.style.justifyContent='space-between';
+      row.innerHTML = `<div><b>${i.name}</b> • ${i.size} • ${i.color} × ${i.qty}</div><div><b>${fmt(i.qty*i.price)}</b> ج.م</div>`;
+      box.appendChild(row);
+    });
+    const total = cartTotal();
+    document.getElementById('total').textContent = fmt(total)+' ج.م';
+    document.getElementById('amount').textContent = fmt(total);
+
+    // Generate order id
+    const oid = 'ORDER-' + Math.random().toString(36).slice(2,8).toUpperCase();
+    document.getElementById('orderId').textContent = oid;
+
+    document.getElementById('confirm').addEventListener('click', ()=>{
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const tx = document.getElementById('tx').value.trim();
+      if(!name || !phone || !tx){ document.getElementById('msg').textContent='من فضلك املئي كل البيانات.'; return; }
+      const payload = {orderId: oid, name, phone, tx, total, when: new Date().toISOString(), items: cart};
+      localStorage.setItem('alhidaya_last_order', JSON.stringify(payload));
+      // Clear cart
+      saveCart([]);
+      document.getElementById('msg').textContent='تم تسجيل بياناتك. سنراجع الدفع ونتواصل معك قريبًا. شكرًا!';
+      // Update badge
+      const badge = document.querySelector('[data-cart-count]'); if(badge) badge.textContent='0';
+    });
+  </script>
+</body>
+</html>

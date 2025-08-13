@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>الهداية | أناقة محايدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="متجر الهداية للملابس الحريمي — تصميم أنيق ومحايد مع تسوق سهل ودفع عبر Vodafone Cash.">
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="brand">الهداية<span class="dot">•</span></div>
+      <nav class="nav-actions">
+        <a class="btn btn-ghost" href="#new">جديدنا</a>
+        <a class="btn btn-ghost" href="#cats">الأقسام</a>
+        <a class="btn" href="checkout.html">السلة <span class="badge" data-cart-count>0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <p class="kicker">NEW • SS25</p>
+        <h1 class="hero-title">الهداية — أناقة محايدة</h1>
+        <p class="hero-sub">تشكيلة مختارة من الملابس الحريمي للمناسبات واليوم العادي—بتصميم عصري وألوان هادئة.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#new">تسوقي الآن</a>
+          <a class="btn" href="#cats">الأقسام</a>
+        </div>
+      </div>
+      <div class="hero-img">
+        <img src="https://images.unsplash.com/photo-1520975916332-6d9b7f6b3c83?auto=format&fit=crop&w=1200&q=60" alt="الهداية فاشن">
+      </div>
+    </section>
+
+    <section id="cats" class="section-head">
+      <div>
+        <h2 class="section-title">الأقسام</h2>
+        <p class="section-sub">فساتين • بلوزات • بناطيل • جاكيتات</p>
+      </div>
+      <a href="#new">عرض الكل</a>
+    </section>
+
+    <section id="new" class="grid" style="margin-top:8px">
+      <!-- Product cards injected by JS -->
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      © 2025 الهداية — متجر تجريبي. الدفع عبر <b>Vodafone Cash</b> على الرقم <span class="code">01009978684</span>.
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    // Render products
+    const grid = document.querySelector('#new');
+    PRODUCTS.forEach(p => {
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.innerHTML = `
+        <div class="card-img-wrap">
+          <img class="card-img" src="${p.img}" alt="${p.name}">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">${p.name}</h3>
+          <div class="row" style="justify-content:space-between">
+            <span class="card-price">${fmt(p.price)} ج.م</span>
+            <span class="card-meta">متاح مقاسات: ${p.sizes.join(', ')}</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="product.html?id=${p.id}">عرض التفاصيل</a>
+            <button class="btn btn-primary" onclick="addToCart('${p.id}', '${p.sizes[0]}', '${p.colors[0]}', 1)">أضف للسلة</button>
+          </div>
+        </div>`;
+      grid.appendChild(el);
+    });
+  </script>
+</body>
+</html>
